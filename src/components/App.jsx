@@ -17,13 +17,19 @@ const initialContacts = [
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ]
 
-  const [contacts, setContacts] = useState(()=> (localStorage.getItem(`contacts`)) ?? initialContacts);
+  const [contacts, setContacts] = useState(initialContacts);
   const [filter, setFilter] = useState('');
-
-
-useEffect(() => {
-localStorage.setItem(`contacts`, JSON.stringify(contacts));
-}, [contacts]);  
+  useEffect(() => {
+    const contacts = localStorage.getItem('contacts');
+    if (contacts) {
+      setContacts(JSON.parse(contacts));
+    }
+  }, []);
+  useEffect(() => {
+    if (contacts) {
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+    }
+  }, [contacts]);
   
 const formSubmitHandler = (name, number) => { 
     const contact = {
@@ -66,7 +72,7 @@ const isNameInContact = contacts.find(
         <h2>Contacts</h2>
         <Filter value={filter} onChange={changeFilter} />
         <ContactsList
-          contactsList={getVisibleContacts()}
+          contacts={getVisibleContacts()}
           onDeleteContact={deleteContact} 
           />
         <Toaster />
