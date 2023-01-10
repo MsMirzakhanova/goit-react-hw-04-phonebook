@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import  { useState } from 'react';
 import { ContactInputForm } from './Phonebook.styled';
 import PropTypes from 'prop-types';
 
@@ -8,38 +8,50 @@ const inputNameId = shortid.generate();
 const inputNumberId = shortid.generate();
 const buttonId = shortid.generate();
 
-export class PhonebookForm extends Component {
-  state = {
-  name: '',
-  number: ''
-  }
+export function PhonebookForm ({onSubmit}) {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
-  handelInputChange = e => {
+
+  const handleChange = e => {
   const { name, value } = e.currentTarget;
-  this.setState({[name]: value});
+  
+    switch (name) {
+      case `name`:
+        setName(value)
+        break;
+      
+      case `number`:
+        setNumber(value)
+        break;
+    
+      default:
+        return;
+    }
   
   };  
 
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
-    console.log(this.state);
-    this.props.onSubmit(this.state);
-    this.reset();
+
+    onSubmit(name, number);
+    reset();
 
   }
 
-  reset = () => {
-    this.setState({ name: '', number: '' });
-  }
-  render() {
+  const reset = () => {
+    setName('')
+    setNumber('')
+  };
+ 
     return (
-  <ContactInputForm autoComplete='off' onSubmit={this.handleSubmit}>
+  <ContactInputForm autoComplete='off' onSubmit={handleSubmit}>
 <label htmlFor={inputNameId}>Name</label>
 <input
   type="text"
   name="name"
-  value={this.state.name}
-  onChange={this.handelInputChange}
+  value={name}
+  onChange={handleChange}
   id={inputNameId}
   pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
   title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
@@ -49,8 +61,8 @@ export class PhonebookForm extends Component {
 <input
   type="tel"
   name="number"
-  value={this.state.number}
-  onChange={this.handelInputChange}
+  value={number}
+  onChange={handleChange}
   id={inputNumberId}
   pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
   title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
@@ -60,7 +72,7 @@ export class PhonebookForm extends Component {
 </ContactInputForm>
     );
   }
-}
+
 
 PhonebookForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
